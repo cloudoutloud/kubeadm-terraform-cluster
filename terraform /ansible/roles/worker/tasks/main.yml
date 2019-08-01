@@ -1,6 +1,11 @@
 ---
 # tasks file for worker
 
+- name: Copy the file from local to kube-worker1/2
+  copy: 
+    src: /tmp/bootstrap_token.sh
+    dest: /bootstrap_token.sh
+
 - name: Joining node to cluster
   command: bash /bootstrap_token.sh
 
