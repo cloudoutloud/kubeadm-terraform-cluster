@@ -1,0 +1,8 @@
+---
+# tasks file for worker
+
+- name: Joining node to cluster
+  command: bash /bootstrap_token.sh
+
+- name: Reboot the server
+  reboot: 
