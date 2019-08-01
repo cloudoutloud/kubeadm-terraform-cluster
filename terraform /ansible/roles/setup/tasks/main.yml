@@ -1,0 +1,58 @@
+---
+# tasks file for setup
+
+- name: Disable swap
+  command: swapoff -a
+
+- name: Disable selinux
+  selinux: policy=targeted state=permissive
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Yum update... may take a while
+  yum: name=* state=latest
+
+- name: Install docker dependince packages
+  yum:
+    name: "{{item}}"
+    state: latest
+  loop: ['yum-utils', 'device-mapper-persistent-data', 'lvm2', 'net-tools']
+            
+- name: Add Docker repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+
+- name: Install Docker
+  package:
+    name: docker-ce
+    state: latest
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create kubernetes yum repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+    gpgcheck: 0
+
+- name: Install kube packages
+  yum: 
+    name: "{{item}}"
+    state: latest
+  loop: ['kubeadm', 'kubelet', 'kubectl']
+
+- name: Enable and start kubelet
+  systemd: state=started enabled=yes name=kubelet
+
+- name: Set sysctl settings
+  command: sysctl --system
