@@ -1,0 +1,50 @@
+---
+# tasks file for master
+
+     - name: Initialize master node, please wait may take some time
+       command: kubeadm init --image-repository registry.aliyuncs.com/google_containers 
+     
+     - name: Create kube config dir for current/ansible become user
+       file:
+        path: "{{ ansible_env.HOME | default('/root') }}/.kube"
+        mode: "0700"
+        state: directory
+
+     - name: Copy admin kubeconfig to current/ansible become user home
+       copy:
+        src: "/etc/kubernetes/admin.conf"
+        dest: "{{ ansible_env.HOME | default('/root') }}/.kube/config"
+        remote_src: yes
+        mode: "0600"
+        backup: yes
+        
+     - name: Deploying Weavenet CNI
+       shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" 
+     
+     - name: Creating worker bootstrap token
+       shell: kubeadm token create --print-join-command > /bootstrap_token.sh 
+    
+     - name: Inserting kubectl alias into bashrc
+       blockinfile:
+        dest: ~/.bashrc
+        block: |
+          alias k='kubectl'
+          alias kg='kubectl get'
+          alias kgpo='kubectl get po'
+          alias kgn='kubectl get nodes'
+          alias kd='kubectl describe'
+          alias krm='kubectl delete'
+          alias krmf='kubectl delete -f'
+          alias kc='kubectl create -f'
+          alias ka='kubectl apply -f'
+          alias kl='kubectl logs'
+        backup: yes
+     
+     - name: Fetch the file from the kube-master to local
+       fetch: 
+         src: /bootstrap_token.sh
+         dest: /tmp/
+         flat: yes 
+
+     - name: Reboot the server
+       reboot:
