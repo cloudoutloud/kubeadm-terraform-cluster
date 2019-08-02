@@ -13,7 +13,7 @@ resource "aws_instance" "kube-worker1" {
   tags = {
     Name = "kube-worker1"
   }
-
+  
   provisioner "remote-exec" {
     inline = ["echo Ready"]
 
