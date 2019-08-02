@@ -1,6 +1,10 @@
 ---
 # tasks file for master
 
+     - name: change hostname
+       hostname:
+        name: "kube-master"
+
      - name: Initialize master node, please wait may take some time
        command: kubeadm init --image-repository registry.aliyuncs.com/google_containers 
      
