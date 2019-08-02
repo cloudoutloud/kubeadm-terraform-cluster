@@ -55,7 +55,7 @@ resource "aws_instance" "kube-worker2" {
     inline = ["echo Ready"]
 
     connection {
-      host = "${aws_instance.kube-worker1.public_ip}"
+      host = "${aws_instance.kube-worker2.public_ip}"
       type = "ssh"
       user = "centos"
       private_key = "${file("~/.ssh/TF.pem")}"
