@@ -44,7 +44,7 @@
        fetch: 
          src: /bootstrap_token.sh
          dest: /tmp/
-         flat: yes 
+         flat: yes
 
      - name: Reboot the server
        reboot:
