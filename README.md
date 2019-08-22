@@ -1,5 +1,5 @@
 # kubeadm-terraform-cluster
-Three node Kubeadm kubernetes cluster provisioned using Terraform and Ansible
+Three node Kubeadm kubernetes cluster provisioned using Terraform and Ansible on AWS
 
 infra is provisioned using terraform and configuration is managed by Ansible
 *** This is desgined for lab env not for production use security is very relaxed ***
